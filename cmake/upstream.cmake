@@ -1,8 +1,17 @@
-# 上游接入：speexdsp（autotools）。
-# 交叉时上游已由 scripts/local-cross.sh 编到 -DPKG_PREFIX 指向的前缀，
-# 探针只负责链接静态库，不回头再编一遍上游（没有 pkg 目标）。
+# 上游接入：speexdsp（autotools）。两侧各从自己的 SRC_DIR 编一份 prefix。
+if(NOT DEFINED PKG_PREFIX)
+  set(PKG_PREFIX "${CMAKE_BINARY_DIR}/pkg/prefix")
+  add_custom_target(pkg ALL
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-build.sh" "${SRC_DIR}" "${CMAKE_BINARY_DIR}"
+    COMMENT "构建上游 speexdsp（${SRC_DIR}）"
+    VERBATIM)
+  set(HAVE_PKG_TARGET TRUE)
+endif()
 
 add_executable(speexdsp_harness test/pkg_speexdsp.c)
+if(HAVE_PKG_TARGET)
+  add_dependencies(speexdsp_harness pkg)
+endif()
 target_include_directories(speexdsp_harness PRIVATE "${PKG_PREFIX}/include")
 target_link_directories(speexdsp_harness PRIVATE "${PKG_PREFIX}/lib")
 target_link_libraries(speexdsp_harness PRIVATE speexdsp m)
