@@ -2,7 +2,7 @@
 if(NOT DEFINED PKG_PREFIX)
   set(PKG_PREFIX "${CMAKE_BINARY_DIR}/pkg/prefix")
   add_custom_target(pkg ALL
-    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-build.sh" "${SRC_DIR}" "${CMAKE_BINARY_DIR}"
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake/pkg-build.sh" "${SRC_DIR}" "${CMAKE_BINARY_DIR}" "${RVV_MARCH}" "$<IF:$<BOOL:${RVV_KERNELS}>,1,0>"
     COMMENT "构建上游 speexdsp（${SRC_DIR}）"
     VERBATIM)
   set(HAVE_PKG_TARGET TRUE)

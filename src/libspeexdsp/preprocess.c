@@ -1,3 +1,6 @@
+#if defined(RVV_KERNELS) && defined(__riscv_v)
+#include "riscv/window_rvv.h"
+#endif
 /* Copyright (C) 2003 Epic Games (written by Jean-Marc Valin)
    Copyright (C) 2004-2006 Epic Games
 
@@ -630,8 +633,12 @@ static void preprocess_analysis(SpeexPreprocessState *st, spx_int16_t *x)
       st->inbuf[i]=x[N4+i];
 
    /* Windowing */
+#if defined(RVV_KERNELS) && defined(__riscv_v) && !defined(FIXED_POINT)
+   spx_window_apply_rvv(st->frame, st->window, 2*N);
+#else
    for (i=0;i<2*N;i++)
       st->frame[i] = MULT16_16_Q15(st->frame[i], st->window[i]);
+#endif
 
 #ifdef FIXED_POINT
    {

@@ -7,3 +7,5 @@ build/
 *.out
 *.raw
 .DS_Store
+bsrc-cpu/
+bsrc-rvv/
